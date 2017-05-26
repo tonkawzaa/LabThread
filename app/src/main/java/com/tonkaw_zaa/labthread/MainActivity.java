@@ -191,6 +191,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int a, b;
 
         Integer result;
+
+        Handler handler;
         public AdderAsyncTaskLoader(Context context, int a, int b) {
             super(context);
             this.a = a;
@@ -201,10 +203,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         public Integer loadInBackground() {
             Log.d("LLLL","loadInBackground");
             // Background Tread
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-            }
+//            try {
+//                Thread.sleep(5000);
+//            } catch (InterruptedException e) {
+//            }
             result = a + b;
             return result;
         }
@@ -213,17 +215,44 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         protected void onStartLoading() {
             super.onStartLoading();
             Log.d("LLLL","onStartLoading");
-            forceLoad();
+            if(result != null){
+                deliverResult(result);
+            }
+            // Initialize Handler
+            if(handler == null){
+                handler = new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        a = (int)(Math.random() * 100);
+                        b = (int)(Math.random() * 100);
+                        onContentChanged();
+                        handler.sendEmptyMessageDelayed(0 , 3000);
+                    }
+                };
+                handler.sendEmptyMessageDelayed(0 , 3000);
+            }
+            if(takeContentChanged() || result == null) {
+                forceLoad();
+            }
         }
 
         @Override
         protected void onStopLoading() {
             super.onStopLoading();
             Log.d("LLL","onStopLoading");
-            if(result != null){
-                deliverResult(result);
-            }
+
             forceLoad();
+        }
+
+        @Override
+        protected void onReset() {
+            super.onReset();
+            // Destroy handler
+            if(handler != null){
+                handler.removeCallbacksAndMessages(null);
+                handler = null;
+            }
         }
     }
 
