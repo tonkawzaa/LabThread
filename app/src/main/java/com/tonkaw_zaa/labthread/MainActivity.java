@@ -11,6 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Object> {
@@ -173,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Object> loader, Object data) {
+        Log.d("LLLL","onLoadFinished");
         if(loader.getId() == 1){
             Integer result = (Integer) data;
             tvCounter.setText(result + "");
@@ -187,6 +189,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     static class AdderAsyncTaskLoader extends AsyncTaskLoader<Object>{
 
         int a, b;
+
+        Integer result;
         public AdderAsyncTaskLoader(Context context, int a, int b) {
             super(context);
             this.a = a;
@@ -195,17 +199,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         @Override
         public Integer loadInBackground() {
+            Log.d("LLLL","loadInBackground");
             // Background Tread
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
             }
-            return a + b;
+            result = a + b;
+            return result;
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
+            Log.d("LLLL","onStartLoading");
+            forceLoad();
+        }
+
+        @Override
+        protected void onStopLoading() {
+            super.onStopLoading();
+            Log.d("LLL","onStopLoading");
+            if(result != null){
+                deliverResult(result);
+            }
             forceLoad();
         }
     }
