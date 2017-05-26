@@ -1,6 +1,7 @@
 package com.tonkaw_zaa.labthread;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -13,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.tonkaw_zaa.labthread.service.CounterIntentService;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Object> {
 
@@ -152,7 +155,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
        // sampleAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,0 ,100); // Thread Pool Count = Number of CPU Cores (<5 sec)
 
         //Thread Method 6: AsyncTaskLoader
-        getSupportLoaderManager().initLoader(1, null, this);
+        //getSupportLoaderManager().initLoader(1, null, this);
+
+        // Thread Method 7 : IntentService
+        Intent intent = new Intent(MainActivity.this, CounterIntentService.class);
+        intent.putExtra("abc", "123");
+        startService(intent);
+
+        Intent intent2 = new Intent(MainActivity.this, CounterIntentService.class);
+        intent2.putExtra("abc", "123");
+        startService(intent2);
+
     }
 
     @Override
